@@ -9,12 +9,12 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: number;
-  attachment?: {
+  attachments?: {
     data: string; // base64
     mimeType: string;
     url: string; // for UI display
     fileName?: string;
-  };
+  }[];
 }
 
 export interface ChatSession {

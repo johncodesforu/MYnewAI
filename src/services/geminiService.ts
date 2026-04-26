@@ -64,7 +64,7 @@ export class GeminiService {
     this.ai = new GoogleGenAI({ apiKey: apiKey || "" });
   }
 
-  async sendMessage(mode: AssistantMode, history: Message[], currentPrompt: string, attachment?: { data: string, mimeType: string }) {
+  async sendMessage(mode: AssistantMode, history: Message[], currentPrompt: string, attachments?: { data: string, mimeType: string }[]) {
     if (!process.env.GEMINI_API_KEY) {
       return "Error: GEMINI_API_KEY is missing. Please add it to the Secrets panel.";
     }
@@ -76,16 +76,18 @@ export class GeminiService {
         parts: [{ text: msg.content }]
       }));
 
-      const modelName = "gemini-3-flash-preview";
+      const modelName = "gemini-3.1-pro-preview";
 
       // Build the current message content
       const currentParts: any[] = [{ text: currentPrompt }];
-      if (attachment) {
-        currentParts.unshift({
-          inlineData: {
-            mimeType: attachment.mimeType,
-            data: attachment.data
-          }
+      if (attachments && attachments.length > 0) {
+        attachments.forEach(attachment => {
+          currentParts.unshift({
+            inlineData: {
+              mimeType: attachment.mimeType,
+              data: attachment.data
+            }
+          });
         });
       }
 
@@ -97,6 +99,7 @@ export class GeminiService {
           temperature: 0.7,
           topP: 0.9,
           topK: 40,
+          tools: [{ googleSearch: {} }]
         },
       });
 

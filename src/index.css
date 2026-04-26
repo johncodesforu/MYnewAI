@@ -7,23 +7,52 @@
 
 @layer base {
   body {
-    @apply bg-neutral-50 text-neutral-900 font-sans;
+    @apply bg-neutral-50 text-neutral-900 font-sans transition-colors duration-300;
   }
 }
 
-.markdown-body {
-  @apply text-sm leading-relaxed;
+.dark {
+  color-scheme: dark;
 }
 
-.markdown-body h1 { @apply text-xl font-bold mt-4 mb-2; }
-.markdown-body h2 { @apply text-lg font-bold mt-3 mb-1; }
-.markdown-body h3 { @apply text-base font-bold mt-2 mb-1; }
-.markdown-body p { @apply mb-3; }
-.markdown-body ul { @apply list-disc ml-5 mb-3; }
-.markdown-body ol { @apply list-decimal ml-5 mb-3; }
-.markdown-body code { @apply bg-neutral-200 px-1 rounded text-xs; }
-.markdown-body pre { @apply bg-neutral-900 text-neutral-100 p-3 rounded-lg overflow-x-auto mb-3; }
-.markdown-body pre code { @apply bg-transparent p-0 text-white; }
+.dark body {
+  @apply bg-neutral-950 text-neutral-50;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-300 dark:bg-neutral-800 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-neutral-400 dark:bg-neutral-700;
+}
+
+.markdown-body {
+  @apply text-sm md:text-[15px] leading-relaxed;
+}
+
+.dark .markdown-body {
+  @apply text-neutral-300;
+}
+
+.markdown-body h1 { @apply text-xl font-bold mt-6 mb-3 tracking-tight; }
+.markdown-body h2 { @apply text-lg font-bold mt-5 mb-2 tracking-tight; }
+.markdown-body h3 { @apply text-base font-bold mt-4 mb-2 tracking-tight; }
+.markdown-body p { @apply mb-4 leading-relaxed; }
+.markdown-body ul { @apply list-disc ml-5 mb-4 space-y-1.5; }
+.markdown-body ol { @apply list-decimal ml-5 mb-4 space-y-1.5; }
+.markdown-body code { @apply bg-neutral-100 dark:bg-neutral-800/80 px-1.5 py-0.5 rounded text-[13px] font-mono border border-neutral-200 dark:border-neutral-700/50; }
+.markdown-body pre { @apply bg-neutral-900 text-neutral-100 p-4 rounded-xl overflow-x-auto mb-5 border border-neutral-800 shadow-xl; }
+.markdown-body pre code { @apply bg-transparent p-0 text-[13px] leading-relaxed border-none; }
 
 @keyframes spin-slow {
   from { transform: rotate(0deg); }
