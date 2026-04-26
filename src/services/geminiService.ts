@@ -79,43 +79,39 @@ export class GeminiService {
     }
 
     try {
-      const model = this.ai.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
-        systemInstruction: SYSTEM_PROMPTS[mode],
-      });
-
-      // Map history to Gemini format (text only for historical memory to save tokens)
-      const chatHistory = history.slice(-10).map(msg => ({
+      const historyParts = history.slice(-10).map(msg => ({
         role: msg.role === 'user' ? 'user' : 'model',
         parts: [{ text: msg.content }]
       }));
+
+      const modelName = "gemini-3-flash-preview";
 
       // Build the current message content
       const currentParts: any[] = [{ text: currentPrompt }];
       if (attachments && attachments.length > 0) {
         attachments.forEach(attachment => {
-          currentParts.unshift({
+          currentParts.push({
             inlineData: {
-              mimeType: attachment.mimeType,
-              data: attachment.data
+              data: attachment.data,
+              mimeType: attachment.mimeType
             }
           });
         });
       }
 
-      const chat = model.startChat({
-        history: chatHistory,
-        generationConfig: {
+      const response = await this.ai.models.generateContent({
+        model: modelName,
+        contents: [...historyParts, { role: 'user', parts: currentParts }],
+        config: {
+          systemInstruction: SYSTEM_PROMPTS[mode],
           temperature: 0.7,
           topP: 0.95,
           topK: 64,
-          maxOutputTokens: 2048,
+          tools: [{ googleSearch: {} }]
         },
       });
 
-      const result = await chat.sendMessage(currentParts);
-      const response = await result.response;
-      return response.text();
+      return response.text || "I'm not fully sure what you mean—can you clarify?";
     } catch (error: any) {
       console.error("Gemini API Error:", error);
       const message = error?.message || String(error);
