@@ -55,18 +55,27 @@ CURRENT MODE: Creative Writer`
 
 export class GeminiService {
   private ai: any;
+  private currentKey: string = "";
 
   constructor() {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      console.warn("GEMINI_API_KEY is not set. AI features will be unavailable.");
+    this.currentKey = process.env.GEMINI_API_KEY || "";
+    this.initAI();
+  }
+
+  private initAI() {
+    this.ai = new GoogleGenAI({ apiKey: this.currentKey });
+  }
+
+  setApiKey(key: string) {
+    if (key && key !== this.currentKey) {
+      this.currentKey = key;
+      this.initAI();
     }
-    this.ai = new GoogleGenAI({ apiKey: apiKey || "" });
   }
 
   async sendMessage(mode: AssistantMode, history: Message[], currentPrompt: string, attachments?: { data: string, mimeType: string }[]) {
-    if (!process.env.GEMINI_API_KEY) {
-      return "Error: GEMINI_API_KEY is missing. Please add it to the Secrets panel.";
+    if (!this.currentKey) {
+      return "Error: GEMINI_API_KEY is missing. Please go to Settings and add your API key.";
     }
 
     try {

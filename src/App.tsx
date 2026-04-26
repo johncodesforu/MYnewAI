@@ -30,6 +30,9 @@ export default function App() {
     const saved = localStorage.getItem('almighty-ai-messages');
     return saved ? JSON.parse(saved) : [];
   });
+  const [apiKey, setApiKey] = useState<string>(() => {
+    return localStorage.getItem('almighty-ai-key') || '';
+  });
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('almighty-ai-theme');
     return (saved as 'light' | 'dark') || 'light';
@@ -59,6 +62,11 @@ export default function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('almighty-ai-key', apiKey);
+    geminiService.setApiKey(apiKey);
+  }, [apiKey]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -327,6 +335,8 @@ export default function App() {
         onClose={() => setIsSettingsOpen(false)} 
         theme={theme}
         onThemeChange={setTheme}
+        apiKey={apiKey}
+        onApiKeyChange={setApiKey}
       />
     </div>
   );
